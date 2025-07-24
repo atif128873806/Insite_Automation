@@ -1,0 +1,15 @@
+# Core dependencies
+setuptools>=68.0.0
+selenium>=4.15.2
+undetected-chromedriver>=3.5.4
+
+# Environment and configuration
+python-dotenv>=1.0.0
+
+# Email and automation
+mailosaur==7.19.0
+pyautogui>=0.9.54
+
+# Web and requests
+requests>=2.31.0
+webdriver-manager>=4.0.1
