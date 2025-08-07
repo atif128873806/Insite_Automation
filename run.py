@@ -44,9 +44,9 @@ def run_registration(bot, plan_choice):
         bot.email_verification()
         print("✓ Email verification completed")
 
-        print("\nStarting onboarding questions...")
-        bot.onboarding_questioner()
-        print("✓ Successfully completed onboarding")
+        # print("\nStarting onboarding questions...")
+        # bot.onboarding_questioner()
+        # print("✓ Successfully completed onboarding")
 
         print("\nStarting extension download...")
         bot.download_extension()

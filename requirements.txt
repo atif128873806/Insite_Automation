@@ -13,3 +13,6 @@ pyautogui>=0.9.54
 # Web and requests
 requests>=2.31.0
 webdriver-manager>=4.0.1
+
+# Additional webdriver support
+chromedriver-autoinstaller>=0.6.0

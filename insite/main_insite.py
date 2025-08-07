@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import sys
 import subprocess
+import chromedriver_autoinstaller
 
 
 from insite.email_verifier import EmailVerification
@@ -19,11 +20,34 @@ from .insite_utility.contact import ContactUs
 # Function to check Chrome version
 def get_chrome_version():
     try:
-        # Try to get Chrome version using subprocess
-        if sys.platform.startswith('linux'):  # just replace with you operating system
-            result = subprocess.run(['google-chrome', '--version'], capture_output=True, text=True)
-            version = result.stdout.strip().split()[-1].split('.')[0]
-            return int(version)
+        # Platform-specific Chrome binary names
+        if sys.platform.startswith('linux'):
+            chrome_binaries = ['google-chrome-stable', 'google-chrome', 'chromium']
+        elif sys.platform.startswith('darwin'):  # macOS
+            chrome_binaries = ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', 'google-chrome']
+        elif sys.platform.startswith('win'):  # Windows
+            chrome_binaries = [
+                r'C:\Program Files\Google\Chrome\Application\chrome.exe',
+                r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
+                'chrome'
+            ]
+        else:
+            chrome_binaries = ['google-chrome-stable', 'google-chrome', 'chromium']
+        
+        for binary in chrome_binaries:
+            try:
+                result = subprocess.run([binary, '--version'], capture_output=True, text=True)
+                if result.returncode == 0:
+                    # Extract version number from output
+                    output = result.stdout.strip()
+                    # Handle different output formats
+                    if 'Google Chrome' in output:
+                        version = output.split()[-1].split('.')[0]
+                    else:
+                        version = output.split()[-1].split('.')[0]
+                    return int(version)
+            except FileNotFoundError:
+                continue
         return None
     except Exception as e:
         print(f"Error getting Chrome version: {e}")
@@ -37,6 +61,14 @@ class Insite:
         chrome_version = get_chrome_version()
         print(f"Detected Chrome version: {chrome_version}")
         
+        # Auto-install ChromeDriver that matches Chrome version
+        try:
+            print("Auto-installing ChromeDriver...")
+            chromedriver_autoinstaller.install()
+            print("ChromeDriver installed successfully!")
+        except Exception as e:
+            print(f"Warning: Could not auto-install ChromeDriver: {e}")
+        
         options = uc.ChromeOptions()
         
         # Basic options
@@ -48,11 +80,18 @@ class Insite:
         # Try to initialize Chrome with version matching
         try:
             print("Attempting to start Chrome with version matching...")
-            self.driver = uc.Chrome(
-                options=options,
-                use_subprocess=True,
-                version_main=chrome_version  # Use the detected Chrome version
-            )
+            if chrome_version:
+                self.driver = uc.Chrome(
+                    options=options,
+                    use_subprocess=True,
+                    version_main=chrome_version  # Use the detected Chrome version
+                )
+            else:
+                # Fallback to automatic version detection
+                self.driver = uc.Chrome(
+                    options=options,
+                    use_subprocess=True
+                )
             self.driver.implicitly_wait(15)
             self.driver.maximize_window()
             print("Chrome started successfully!")
@@ -63,6 +102,8 @@ class Insite:
             print("2. Try updating Chrome to the latest version")
             print("3. Try running: pip install --upgrade undetected-chromedriver")
             print("4. Check if there are any Chrome processes running and close them")
+            print("5. Try running: pip install --upgrade webdriver-manager")
+            print("6. Try running: pip install --upgrade chromedriver-autoinstaller")
             raise
 
     def __enter__(self):
