@@ -1,0 +1,46 @@
+{
+   "action": {
+      "default_title": "insite"
+   },
+   "background": {
+      "service_worker": "service-worker.js",
+      "type": "module"
+   },
+   "content_scripts": [ {
+      "js": [ "import-injected.js" ],
+      "matches": [ "https://*/*", "http://*/*" ]
+   } ],
+   "content_security_policy": {
+      "extension_pages": "default-src 'self'; connect-src https://api.insite.life https://insite.lndo.site https://test-api.insite.life https://bam.eu01.nr-data.net false;"
+   },
+   "description": "Every great idea starts with a thought",
+   "externally_connectable": {
+      "matches": [ "https://api.insite.life/*", "https://test-api.insite.life/*", "https://insite.lndo.site/*" ]
+   },
+   "host_permissions": [ "https://*/*", "http://*/*" ],
+   "icons": {
+      "128": "icons/icon128.png",
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsRJzJZWHKITuhLK61Yqzd3I0wc/Mgfueg35kq/FQPHOrxIn4pAGuFzaWWdE+vbXxjyTrr7suvi9W3K9ZhySC5FQpUemb9pF2Ns3RGKB/DFYAgp+P0sC0ZDnztxMPB0WYqVO5skNAEPCeKO/hVeffQ0UQXQ63X2b47bs4Bxd7vLppvaubD5okAf+SFJGp3dTKY75xXK2tfEPytx2E7GVwNeLobeJog/e6cAZ9FkjY0ce8KEayIiuR4ZcCjOoi0OGyZlRps+dpJ8rEwHwaqbrbom+qXJg0XgfKzRbuPZE0wpQFq6i8a8u+NQzCkmcjpSxOCzdoPmQH+TC+tNV7QQL1GwIDAQAB",
+   "manifest_version": 3,
+   "name": "insite - the thinking app",
+   "options_ui": {
+      "open_in_tab": false,
+      "page": "options.html"
+   },
+   "permissions": [ "storage", "alarms", "scripting" ],
+   "short_name": "insite",
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.4.27",
+   "version_name": "1.4.27",
+   "web_accessible_resources": [ {
+      "matches": [ "\u003Call_urls>" ],
+      "resources": [ "fonts/*", "icons/*" ]
+   }, {
+      "matches": [ "https://*/*", "http://*/*" ],
+      "resources": [ "chunks/*-*.js", "injected.js" ]
+   } ]
+}

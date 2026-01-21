@@ -1,0 +1,17 @@
+/** © 2025, Insite Life Ltd. All rights reserved. **/
+const list=[
+// Native ES errors https://262.ecma-international.org/12.0/#sec-well-known-intrinsic-objects
+EvalError,RangeError,ReferenceError,SyntaxError,TypeError,URIError,
+// Built-in errors
+globalThis.DOMException,
+// Node-specific errors
+// https://nodejs.org/api/errors.html
+globalThis.AssertionError,globalThis.SystemError].filter(Boolean).map(constructor=>[constructor.name,constructor]);var errorConstructors$1=new Map(list);class NonError extends Error{name="NonError";constructor(message){super(NonError._prepareSuperMessage(message));}static _prepareSuperMessage(message){try{return JSON.stringify(message)}catch{return String(message)}}}const commonProperties=[{property:"name",enumerable:!1},{property:"message",enumerable:!1},{property:"stack",enumerable:!1},{property:"code",enumerable:!0},{property:"cause",enumerable:!1}],toJsonWasCalled=new WeakSet,getErrorConstructor=name=>errorConstructors$1.get(name)??Error,destroyCircular=({from,seen,to,forceEnumerable,maxDepth,depth,useToJSON,serialize})=>{if(!to)if(Array.isArray(from))to=[];else if(!serialize&&isErrorLike(from)){to=new(getErrorConstructor(from.name));}else to={};if(seen.push(from),depth>=maxDepth)return to;if(useToJSON&&"function"==typeof from.toJSON&&!toJsonWasCalled.has(from))return (from=>{toJsonWasCalled.add(from);const json=from.toJSON();return toJsonWasCalled.delete(from),json})(from);const continueDestroyCircular=value=>destroyCircular({from:value,seen:[...seen],forceEnumerable,maxDepth,depth,useToJSON,serialize});for(const[key,value]of Object.entries(from))if(value&&value instanceof Uint8Array&&"Buffer"===value.constructor.name)to[key]="[object Buffer]";else
+// TODO: Use `stream.isReadable()` when targeting Node.js 18.
+if(null===value||"object"!=typeof value||"function"!=typeof value.pipe){if("function"!=typeof value)if(value&&"object"==typeof value)seen.includes(from[key])?to[key]="[Circular]":(depth++,to[key]=continueDestroyCircular(from[key]));else
+// Gracefully handle non-configurable errors like `DOMException`.
+try{to[key]=value;}catch{}}else to[key]="[object Stream]";for(const{property,enumerable}of commonProperties)void 0!==from[property]&&null!==from[property]&&Object.defineProperty(to,property,{value:isErrorLike(from[property])?continueDestroyCircular(from[property]):from[property],enumerable:!!forceEnumerable||enumerable,configurable:!0,writable:!0});return to};function serializeError(value,options={}){const{maxDepth=Number.POSITIVE_INFINITY,useToJSON=!0}=options;return "object"==typeof value&&null!==value?destroyCircular({from:value,seen:[],forceEnumerable:!0,maxDepth,depth:0,useToJSON,serialize:!0}):
+// People sometimes throw things besides Error objects…
+"function"==typeof value?`[Function: ${value.name||"anonymous"}]`:value}function deserializeError(value,options={}){const{maxDepth=Number.POSITIVE_INFINITY}=options;if(value instanceof Error)return value;if(function(value){return Boolean(value)&&"object"==typeof value&&"message"in value&&!Array.isArray(value)}(value)){const Error=getErrorConstructor(value.name);return destroyCircular({from:value,seen:[],to:new Error,maxDepth,depth:0,serialize:!1})}return new NonError(value)}function isErrorLike(value){return Boolean(value)&&"object"==typeof value&&"name"in value&&"message"in value&&"stack"in value}
+
+export { deserializeError as d, serializeError as s };
